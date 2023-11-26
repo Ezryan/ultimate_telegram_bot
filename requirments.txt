@@ -1,0 +1,2 @@
+python=3.7+
+telebot=4.12.0
