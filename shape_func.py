@@ -11,4 +11,4 @@ def poorly(tg_bot, message, command):
 
 
 def usrname_to_id(username):
-    return username
+    return int(username)
