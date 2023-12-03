@@ -12,13 +12,13 @@
 import telebot
 from user import User
 from shape_func import no_member, poorly, usrname_to_id
-from parametrs import TOKEN, CREATOR, WARN_TO_MUTE
+from parametrs import TOKEN, CREATOR, TESTER, WARN_TO_MUTE
 from event import Event
 import datetime
 
 bot = telebot.TeleBot(TOKEN)
 
-USERS = {CREATOR: User(2)}
+USERS = {CREATOR: User(2), TESTER: User(2)}
 EVENTS = []
 
 
@@ -213,10 +213,26 @@ def create_event(message):
 def deadline(message):
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
-        return 
+        return
     for event in EVENTS:
         if event.date == datetime.date.today():
             bot.send_message(message.chat.id, event.describtion)
+    else:
+        bot.send_message(message.chat.id, "Расчилься, сегодня ничего нет")
+
+
+@bot.message_handler(commands=['event_list'])
+def deadline(message):
+    if USERS.get(message.from_user.id) is None:
+        no_member(bot, message)
+        return
+
+    flag = False
+    for event in EVENTS:
+        bot.send_message(message.chat.id, event.describtion + ' ' + str(event.date))
+        flag = True
+    if not flag:
+        bot.send_message(message.chat.id, "Ничего нет")
 
 
 @bot.message_handler(commands=['coins', 'mafia'])
