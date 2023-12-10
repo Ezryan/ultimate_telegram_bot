@@ -1,14 +1,3 @@
-"""
-/mafia
-/coins (smart minigame analog)
-
-//rights = dict
-//json = USERS
-//bd class
-//class coins
-//class mafia
-"""
-
 import telebot
 from user import User
 from shape_func import no_member, poorly, usrname_to_id
@@ -24,6 +13,11 @@ EVENTS = []
 
 @bot.message_handler(commands=['help'])
 def command_list(message):
+    """
+    Prints command list
+    :param message:
+    :return:
+    """
     bot.send_message(message.chat.id, "Привет, меня зовут Генадий Брат. Я буду вашим новым другом.")
     bot.send_message(message.chat.id, "Мои комманды:\n" +
                                       "/start - вступить в ряды пользователей Генадия\n" +
@@ -39,11 +33,17 @@ def command_list(message):
                                       "/mute - кинуть в мут\n<user>\nУровень доступа 1\n" +
                                       "/pardon - снять мут\n<user>\nУровень доступа 1\n" +
                                       "/give_admin - выдать права администратора\n<user>\nУровень доступа 2\n" +
-                                      "/demote - понизить уровень доступа\n<user>\nУровень доступа 2\n")
+                                      "/demote - понизить уровень доступа\n<user>\nУровень доступа 2\n" +
+                                      "/event_list - вывести список событий\nУровень доступа 1\n")
 
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    """
+    signing in community
+    :param message:
+    :return:
+    """
     bot.send_message(message.chat.id, "Привет, меня зовут Генадий Брат. Я буду вашим новым другом.\n" +
                                       "Чтобы посмотреть список команд введите /help")
     if USERS.get(message.from_user.id) is None:
@@ -56,11 +56,21 @@ def start(message):
 
 @bot.message_handler(commands=['info'])
 def info(message):
+    """
+    information about creator
+    :param message:
+    :return:
+    """
     bot.send_message(message.chat.id, 'Создатель: @YamSuf\nНа кофе: 4817760342918145')
 
 
 @bot.message_handler(commands=['all'])
 def tag_all(message):
+    """
+    tags all of users
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
@@ -74,6 +84,11 @@ def tag_all(message):
 
 @bot.message_handler(commands=['kill'])
 def kill(message):
+    """
+    stops bot with delay
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
@@ -86,8 +101,15 @@ def kill(message):
 
 @bot.message_handler(commands=['give_admin'])
 def give(message):
+    """
+    gives admin rights
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
+        # catching exception not member type
         no_member(bot, message)
+        # return message
         return
     arg = message.text.split()[1:]
     if len(arg) != 1:
@@ -105,6 +127,11 @@ def give(message):
 
 @bot.message_handler(commands=['demote'])
 def demote(message):
+    """
+    demotion in rights
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
@@ -124,6 +151,11 @@ def demote(message):
 
 @bot.message_handler(commands=['pardon'])
 def unmute(message):
+    """
+    delete muting from user
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
@@ -144,6 +176,11 @@ def unmute(message):
 
 @bot.message_handler(commands=['mute'])
 def mute(message):
+    """
+    mute user
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
@@ -164,6 +201,11 @@ def mute(message):
 
 @bot.message_handler(commands=['warn'])
 def warn(message):
+    """
+    drop warning for user
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
@@ -188,6 +230,11 @@ def warn(message):
 
 @bot.message_handler(commands=['event'])
 def create_event(message):
+    """
+    create Event type object in event list
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
@@ -211,18 +258,30 @@ def create_event(message):
 
 @bot.message_handler(commands=['deadline'])
 def deadline(message):
+    """
+    display deadlines
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
+    flag = False
     for event in EVENTS:
         if event.date == datetime.date.today():
             bot.send_message(message.chat.id, event.describtion)
-    else:
+            flag = True
+    if not flag:
         bot.send_message(message.chat.id, "Расчилься, сегодня ничего нет")
 
 
 @bot.message_handler(commands=['event_list'])
-def deadline(message):
+def deadline_list(message):
+    """
+    display deadline list
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         no_member(bot, message)
         return
@@ -237,11 +296,21 @@ def deadline(message):
 
 @bot.message_handler(commands=['coins', 'mafia'])
 def in_dev(message):
+    """
+    in developing
+    :param message:
+    :return:
+    """
     bot.send_message(message.chat.id, "Эта команда ещё в разработке")
 
 
 @bot.message_handler()
 def delete_from_muted(message):
+    """
+    processing muting
+    :param message:
+    :return:
+    """
     if USERS.get(message.from_user.id) is None:
         return
     if USERS[message.from_user.id].is_mute:
